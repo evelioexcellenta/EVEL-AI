@@ -48,12 +48,12 @@ app.listen(port, () => {
   console.log(`Server started on port ${port}`);
 });
 
-app.get("/api/upload", (req, res) => {
+app.get("api/upload", (req, res) => {
   const result = imagekit.getAuthenticationParameters();
   res.send(result);
 });
 
-app.get("/api/userchats", ClerkExpressRequireAuth(), async (req, res) => {
+app.get("api/userchats", ClerkExpressRequireAuth(), async (req, res) => {
   const userId = req.auth.userId;
   try {
     const userChats = await UserChats.find({ userId: userId });
@@ -64,7 +64,7 @@ app.get("/api/userchats", ClerkExpressRequireAuth(), async (req, res) => {
   }
 });
 
-app.get("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
+app.get("api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
   const userId = req.auth.userId;
   try {
     const chat = await Chat.findOne({ _id: req.params.id, userId });
@@ -75,7 +75,7 @@ app.get("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
   }
 });
 
-app.put("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
+app.put("api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
   const userId = req.auth.userId;
   const { question, answer, img } = req.body;
   const newItems = [
@@ -103,7 +103,7 @@ app.put("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
   }
 });
 
-app.post("/api/chats", ClerkExpressRequireAuth(), async (req, res) => {
+app.post("api/chats", ClerkExpressRequireAuth(), async (req, res) => {
   const userId = req.auth.userId;
 
   const { text } = req.body;
