@@ -5,9 +5,14 @@ import mongoose from "mongoose";
 import Chat from "./models/chat.js";
 import UserChats from "./models/userChat.js";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
+import url, { fileURLToPath } from "url";
+import path from "path";
 
 const port = process.env.PORT || 3000;
 const app = express();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(
   cors({
@@ -98,7 +103,6 @@ app.put("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
   }
 });
 
-
 app.post("/api/chats", ClerkExpressRequireAuth(), async (req, res) => {
   const userId = req.auth.userId;
 
@@ -153,4 +157,9 @@ app.post("/api/chats", ClerkExpressRequireAuth(), async (req, res) => {
     console.log(err);
     res.status(500).send("error creating chat");
   }
+});
+app.use(express.static(path.join(__dirname, "../client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
 });
