@@ -20,14 +20,10 @@ const NewPrompt = ({ data }) => {
 
   const chat = model.startChat({
     history: [
-      {
-        role: "user",
-        parts: [{ text: "Hello" }],
-      },
-      {
-        role: "model",
-        parts: [{ text: "Great to meet you. What would you like to know?" }],
-      },
+      data?.history.map(({ role, parts }) => ({
+        role,
+        parts: [{ text: parts[0].text }],
+      })),
     ],
     generationConfig: {
       // maxOutputTokens: 100,
@@ -131,7 +127,7 @@ const NewPrompt = ({ data }) => {
       )}
       {question && <div className="message user">{question}</div>}
       {answer && (
-        <div className="message USER">
+        <div className="message">
           <Markdown>{answer}</Markdown>
         </div>
       )}
