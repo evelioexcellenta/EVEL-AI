@@ -1,8 +1,6 @@
 import express from "express";
 import ImageKit from "imagekit";
 import cors from "cors";
-import path from "path";
-import url, { fileURLToPath } from "url";
 import mongoose from "mongoose";
 import Chat from "./models/chat.js";
 import UserChats from "./models/userChat.js";
@@ -10,8 +8,6 @@ import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 
 const port = process.env.PORT || 3000;
 const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 app.use(
   cors({
@@ -47,12 +43,12 @@ app.listen(port, () => {
   console.log(`Server started on port ${port}`);
 });
 
-app.get("api/upload", (req, res) => {
+app.get("/api/upload", (req, res) => {
   const result = imagekit.getAuthenticationParameters();
   res.send(result);
 });
 
-app.get("api/userchats", ClerkExpressRequireAuth(), async (req, res) => {
+app.get("/api/userchats", ClerkExpressRequireAuth(), async (req, res) => {
   const userId = req.auth.userId;
   try {
     const userChats = await UserChats.find({ userId: userId });
@@ -63,7 +59,7 @@ app.get("api/userchats", ClerkExpressRequireAuth(), async (req, res) => {
   }
 });
 
-app.get("api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
+app.get("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
   const userId = req.auth.userId;
   try {
     const chat = await Chat.findOne({ _id: req.params.id, userId });
@@ -74,7 +70,7 @@ app.get("api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
   }
 });
 
-app.put("api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
+app.put("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
   const userId = req.auth.userId;
   const { question, answer, img } = req.body;
   const newItems = [
@@ -102,7 +98,8 @@ app.put("api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
   }
 });
 
-app.post("api/chats", ClerkExpressRequireAuth(), async (req, res) => {
+
+app.post("/api/chats", ClerkExpressRequireAuth(), async (req, res) => {
   const userId = req.auth.userId;
 
   const { text } = req.body;
@@ -157,11 +154,3 @@ app.post("api/chats", ClerkExpressRequireAuth(), async (req, res) => {
     res.status(500).send("error creating chat");
   }
 });
-
-app.use(express.static(path.join(__dirname, "../client")));
-
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client", "index.html"));
-});
-
